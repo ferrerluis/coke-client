@@ -35,25 +35,37 @@ coolerApp.config(function($routeProvider) {
 
 coolerApp.controller('homeController', function($scope, $log, $firebaseArray, $firebaseObject) {
     
-    var ref = new Firebase("https://coke-cooler.firebaseio.com/drinks/");
+    var ref = new Firebase("https://coke-cooler.firebaseio.com/drinks");
 
+    // $scope.drinks = $firebaseObject(ref);
     $scope.drinks = $firebaseArray(ref);
     
-    $log.info($scope.drinks);
+    // $log.info($scope.drinks);
     
-    // $scope.coolers.$add({
-    //     "device": "12347",
-    //     "drinks": {
-    //         "fanta": true
-    //     },
-    //     "location": {
-    //         "longitude": 391.131,
-    //         "latitude": 217.293
-    //     }
-    // });
+    // $scope.drinks.$value = {
+    //     "Coke": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_Coke_12oz.png"},
+    //     "Desani Water": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_Dasani_20oz.png"},
+    //     "Fanta Orange": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_Fanta_12.png"},
+    //     "Minute Maid Lemonade": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_MinuteMaid_LightLemonade_59.png"},
+    //     "Minute Maid Orange Juice": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_MinuteMaid_PureSqueezed_59.png"},
+    //     "Nos": {"url": "http://www.drinknos.com/wp-content/uploads/sites/26/2014/03/product-original-221.png"},
+    //     "Smart Water": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_SmartWater_20oz.png"},
+    //     "Sprite": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productDetails/ProductImages/Sprite_12oz_v2.png"},
+    //     "Tea": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_GoldPeak_Lemon_18-5oz.png"},
+    //     "Vitamin Water": {"url": "http://www.coca-colaproductfacts.com/content/dam/productfacts/us/productfilter/PFP_filterimages/PFP_VitaminWater_PowerCDragonfruit_20oz.png"}
+    // };
+    
+    // $scope.drinks.$save();
 });
 
-coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $timeout, $location) {
+coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $location) {
+    
+    // $scope.$on('$viewContentLoaded', function(){
+
+    //     $log.info($(window).outerHeight(), $("header").height(), $("#map").height());
+
+    //     $("#map").height($(window).outerHeight() - $("header").outerHeight());
+    // });
     
     var ref = new Firebase("https://coke-cooler.firebaseio.com/coolers");
 
@@ -61,10 +73,12 @@ coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $ti
     
     $scope.selectedDrink = $location.search()["drink"];
     
+    $log.info($scope.selectedDrink);
+    
     var initialLocation = new google.maps.LatLng(33.7490, -84.3880);    
     
     var mapOptions = {
-        zoom: 14,
+        zoom: 15,
         center: initialLocation,
         mapTypeId: google.maps.MapTypeId.ROADS
     }
@@ -111,9 +125,8 @@ coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $ti
         for (i = 0; i < $scope.coolers.length; i++) {
             
             if ($scope.coolers[i].drinks[$scope.selectedDrink] !== undefined) {
-                            
+                $log.info("YES");
                 createMarker($scope.coolers[i]);
-                $log.info($scope.coolers[i]);
             }
         }
     });
