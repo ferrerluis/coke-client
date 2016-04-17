@@ -1,24 +1,21 @@
-var myFirebaseRef = new Firebase("https://coke-cooler.firebaseio.com/coolers");
-
-myFirebaseRef.on("value", function(snapshot) {
+function currentLocation(map) {
+    var pos = null;
     
-    var data = snapshot.val();
-    
-    for (var key in data) {
-        
-        console.log(data[key].location);
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            pos = new google.maps.LatLng(
+                position.coords.latitude,
+                position.coords.longitude                
+            );
+            
+            map.setCenter(pos);
+        });
     }
-});
-
-// myFirebaseRef.push({
-//     "id": "AJDH392JSG",
-//     "location": {
-//         "latitude": 33.767532,
-//         "longitude": 84.400885
-//     }
-// });
-
-var coolerApp = angular.module('coolerApp', ['ngRoute']);
+    
+    return pos;
+}
+    
+var coolerApp = angular.module('coolerApp', ['ngRoute', 'firebase']);
 
 coolerApp.config(function($routeProvider) {
     $routeProvider
@@ -37,14 +34,75 @@ coolerApp.config(function($routeProvider) {
 });
 
 
-coolerApp.controller('homeController', function($scope) {
+coolerApp.controller('homeController', function($scope, $log, $firebaseArray) {
     
-    myFirebaseRef.on("value", function(snapshot) {
+    var ref = new Firebase("https://coke-cooler.firebaseio.com/coolers");
 
-        $scope.data = snapshot.val();
-    });
+    $scope.coolers = $firebaseArray(ref);
+    
+    // $scope.coolers.$add({
+    //     "device": "12347",
+    //     "drinks": {
+    //         "fanta": true
+    //     },
+    //     "location": {
+    //         "longitude": 391.131,
+    //         "latitude": 217.293
+    //     }
+    // });
 });
 
-coolerApp.controller('aboutController', function($scope) {
-    $scope.message = 'Look! I am an about page.';
+coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $timeout) {
+    
+    var ref = new Firebase("https://coke-cooler.firebaseio.com/coolers");
+
+    $scope.coolers = $firebaseArray(ref);
+    
+    var initialLocation = new google.maps.LatLng(33.7490, -84.3880);    
+    
+    var mapOptions = {
+        zoom: 14,
+        center: initialLocation,
+        mapTypeId: google.maps.MapTypeId.ROADS
+    }
+
+    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    currentLocation($scope.map);
+
+    $scope.markers = [];
+
+    var infoWindow = new google.maps.InfoWindow();
+
+    var createMarker = function (info) {
+        
+        var marker = new google.maps.Marker({
+            map: $scope.map,
+            position: new google.maps.LatLng(info.location.latitude, info.location.longitude),
+            title: info.device
+        });
+        // marker.content = '<div class="infoWindowContent">' + info.desc + '</div>';
+        
+        google.maps.event.addListener(marker, 'click', function(){
+            infoWindow.setContent('<h2>' + marker.title + '</h2>');
+            infoWindow.open($scope.map, marker);
+        });
+        
+        $scope.markers.push(marker);
+        
+    }  
+
+    $scope.coolers.$loaded(function(list) {
+        
+        for (i = 0; i < $scope.coolers.length; i++) {
+            
+            createMarker($scope.coolers[i]);
+            $log.info($scope.coolers[i]);
+        }
+    });
+
+    $scope.openInfoWindow = function(e, selectedMarker){
+        e.preventDefault();
+        google.maps.event.trigger(selectedMarker, 'click');
+    }
 });
