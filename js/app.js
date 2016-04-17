@@ -33,12 +33,13 @@ coolerApp.config(function($routeProvider) {
         })
 });
 
-
-coolerApp.controller('homeController', function($scope, $log, $firebaseArray) {
+coolerApp.controller('homeController', function($scope, $log, $firebaseArray, $firebaseObject) {
     
-    var ref = new Firebase("https://coke-cooler.firebaseio.com/coolers");
+    var ref = new Firebase("https://coke-cooler.firebaseio.com/drinks/");
 
-    $scope.coolers = $firebaseArray(ref);
+    $scope.drinks = $firebaseArray(ref);
+    
+    $log.info($scope.drinks);
     
     // $scope.coolers.$add({
     //     "device": "12347",
@@ -52,11 +53,13 @@ coolerApp.controller('homeController', function($scope, $log, $firebaseArray) {
     // });
 });
 
-coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $timeout) {
+coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $timeout, $location) {
     
     var ref = new Firebase("https://coke-cooler.firebaseio.com/coolers");
 
     $scope.coolers = $firebaseArray(ref);
+    
+    $scope.selectedDrink = $location.search()["drink"];
     
     var initialLocation = new google.maps.LatLng(33.7490, -84.3880);    
     
@@ -76,15 +79,26 @@ coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $ti
 
     var createMarker = function (info) {
         
+        var title = "Loading...";
+        
+        $log.info(info.drinks[$scope.selectedDrink]);
+        
+        if (info.drinks[$scope.selectedDrink] === false) {
+            
+            title = "Running low";
+        } else {
+            
+            title = "Available";
+        }
+        
         var marker = new google.maps.Marker({
             map: $scope.map,
             position: new google.maps.LatLng(info.location.latitude, info.location.longitude),
-            title: info.device
+            title: title
         });
-        // marker.content = '<div class="infoWindowContent">' + info.desc + '</div>';
         
         google.maps.event.addListener(marker, 'click', function(){
-            infoWindow.setContent('<h2>' + marker.title + '</h2>');
+            infoWindow.setContent('<h3>' + marker.title + '</h3>');
             infoWindow.open($scope.map, marker);
         });
         
@@ -96,8 +110,11 @@ coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $ti
         
         for (i = 0; i < $scope.coolers.length; i++) {
             
-            createMarker($scope.coolers[i]);
-            $log.info($scope.coolers[i]);
+            if ($scope.coolers[i].drinks[$scope.selectedDrink] !== undefined) {
+                            
+                createMarker($scope.coolers[i]);
+                $log.info($scope.coolers[i]);
+            }
         }
     });
 

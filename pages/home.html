@@ -1,3 +1,11 @@
-<div ng-repeat="cooler in coolers">
-    <p>{{cooler}}</p>
+<header>
+    <h1>Refresh</h1>
+</header>
+
+<div class="drinks">
+    <div class="drink" ng-repeat="drink in drinks">
+        <a class="drink-overlay" href="#/map?drink={{drink.$id}}">        
+            <img src="{{drink.url}}" alt="{{drink.$id}}">
+        </a>
+    </div>
 </div>
