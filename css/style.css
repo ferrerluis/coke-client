@@ -81,3 +81,19 @@ header h1 {
         width: 10%
     }   
 }
+
+.drinks-store {
+    
+    padding: 1rem;
+    text-align: center;
+}
+
+.drinks-store .drink {
+    
+    display: inline-block;
+}
+
+.drinks-store:nth-child(even) {
+ 
+    background-color: #DDD;
+}

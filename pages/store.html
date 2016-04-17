@@ -1,0 +1,11 @@
+<header>
+    <h1>Store: {{storeId}}</h1>
+</header>
+
+<div class="drinks-store" ng-repeat="drink in drinks">
+    <div class="drink">
+        <img src="{{getSoda(drink).url}}" alt="{{getSoda(drink).name}}">
+        <h2>{{getSoda(drink).name}}</h2>
+        <p>{{getSoda(drink).availability}}</p>
+    </div>
+</div>
