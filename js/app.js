@@ -47,21 +47,12 @@ coolerApp.controller('homeController', function($scope, $log, $firebaseArray, $f
 
 coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $location) {
     
-    // $scope.$on('$viewContentLoaded', function(){
-
-    //     $log.info($(window).outerHeight(), $("header").height(), $("#map").height());
-
-    //     $("#map").height($(window).outerHeight() - $("header").outerHeight());
-    // });
-    
     var ref = new Firebase("https://coke-cooler.firebaseio.com/coolers");
 
     $scope.coolers = $firebaseArray(ref);
     
     $scope.selectedDrink = $location.search()["drink"];
-    
-    $log.info($scope.selectedDrink);
-    
+        
     var initialLocation = new google.maps.LatLng(33.7490, -84.3880);    
     
     var mapOptions = {
@@ -81,9 +72,7 @@ coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $lo
     var createMarker = function (info) {
         
         var title = "Loading...";
-        
-        $log.info(info.drinks[$scope.selectedDrink]);
-        
+                
         if (info.drinks[$scope.selectedDrink] === false) {
             
             title = "Running low";
@@ -112,7 +101,6 @@ coolerApp.controller('mapController', function($scope, $log, $firebaseArray, $lo
         for (i = 0; i < $scope.coolers.length; i++) {
             
             if ($scope.coolers[i].drinks[$scope.selectedDrink] !== undefined) {
-                $log.info("YES");
                 createMarker($scope.coolers[i]);
             }
         }

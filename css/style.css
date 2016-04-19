@@ -52,26 +52,35 @@ h1, h2, h3, h4, h5, h6 {
 
 header {
     
+    display: table;
     background-color: #e62329;
     text-align: center;
     padding: 1rem;
     box-sizing: border-box;
+    width: 100%;
+    /*table-layout: fixed;*/
+}
+
+header>* {
+    
+    display: table-cell;
+    /*width: 100%;*/
+    vertical-align: middle;  
+    text-align: center;  
 }
 
 header h1 {
     
-    display: inline-block;
     color: #FFF;
     text-transform: uppercase;
     margin: 0;
 }
 
 #back {
-    
-    display: inline-block;
+    display: table-cell;
     text-decoration: none;
     color: #FFF;
-    float: left;
+    text-align: left;
 }
 
 @media (min-width: 700px) {
