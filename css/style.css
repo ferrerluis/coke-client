@@ -97,3 +97,15 @@ header h1 {
  
     background-color: #DDD;
 }
+
+.instructions {
+    
+    background-color: #DDD;
+    text-align: center;
+    padding: 1rem 2rem;
+}
+
+.instructions>* {
+    
+    margin: 0;
+}
